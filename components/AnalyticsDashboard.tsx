@@ -885,37 +885,49 @@ function DailyTrends({ data }: ChartProps) {
             { from: "color", modifiers: [["darker", 0.4]] } as any
           }
           enableSlices="x"
-          sliceTooltip={({ slice }: any) => (
-            <div
-              className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg cursor-pointer border border-slate-600"
-              onClick={() => {
-                const date = slice.points[0]?.data?.x;
-                if (date) {
-                  setSelectedDate(date as string);
-                }
-              }}
-            >
-              <div className="space-y-1">
-                <p className="font-medium text-center">
-                  {slice.points[0]?.data?.x}
-                </p>
-                {slice.points.map((point: any) => (
-                  <div key={point.serieId} className="flex items-center gap-2">
+          sliceTooltip={({ slice }: any) => {
+            const date = slice.points[0]?.data?.x;
+            return (
+              <div className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg border border-slate-600">
+                <div className="space-y-1">
+                  <p className="font-medium text-center">{date}</p>
+                  {slice.points.map((point: any) => (
                     <div
-                      className="w-3 h-3 rounded-full"
-                      style={{ backgroundColor: point.serieColor }}
-                    />
-                    <span>
-                      {point.serieId}: {Number(point.data.y).toLocaleString()}
-                    </span>
-                  </div>
-                ))}
-                <p className="mt-2 text-xs text-slate-400 text-center border-t border-slate-600 pt-2">
-                  🖱️ Click to see detailed breakdown
-                </p>
+                      key={point.serieId}
+                      className="flex items-center gap-2"
+                    >
+                      <div
+                        className="w-3 h-3 rounded-full"
+                        style={{ backgroundColor: point.serieColor }}
+                      />
+                      <span>
+                        {point.serieId}: {Number(point.data.y).toLocaleString()}
+                      </span>
+                    </div>
+                  ))}
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (date) {
+                        setSelectedDate(date as string);
+                      }
+                    }}
+                    onMouseDown={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      if (date) {
+                        setSelectedDate(date as string);
+                      }
+                    }}
+                    className="w-full mt-2 px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors cursor-pointer"
+                  >
+                    🖱️ Click for details
+                  </button>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          }}
           theme={{
             text: { fill: "#e2e8f0" },
             tooltip: { container: { background: "transparent" } },
@@ -935,9 +947,26 @@ function DailyTrends({ data }: ChartProps) {
           <p className="text-slate-500">No cart anomalies detected.</p>
         )}
         <p className="text-xs text-slate-400 mt-2">
-          💡 Click on any data point to see detailed interaction data for that
-          day
+          💡 Hover over any data point and click the blue button in the tooltip
+          to see detailed interaction data
         </p>
+
+        {/* Alternative: Direct date selection buttons */}
+        <div className="flex flex-wrap gap-2 mt-3">
+          <span className="text-xs text-slate-500">Quick select:</span>
+          {series.slice(0, 7).map((dataPoint) => (
+            <button
+              key={dataPoint.date}
+              onClick={() => setSelectedDate(dataPoint.date)}
+              className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
+            >
+              {dataPoint.date}
+            </button>
+          ))}
+          {series.length > 7 && (
+            <span className="text-xs text-slate-500">...</span>
+          )}
+        </div>
       </div>
 
       {/* Day Interaction Details */}
