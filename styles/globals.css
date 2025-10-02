@@ -1,0 +1,27 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: dark;
+}
+
+body {
+  @apply bg-slate-950 text-slate-100 font-sans;
+}
+
+.card {
+  @apply bg-slate-900/80 backdrop-blur rounded-2xl p-6 shadow-lg shadow-slate-950/40 border border-slate-800;
+}
+
+.card-title {
+  @apply text-lg font-semibold mb-3 text-slate-100;
+}
+
+.caption {
+  @apply mt-3 text-sm text-slate-400;
+}
+
+.muted {
+  @apply text-sm text-slate-500;
+}

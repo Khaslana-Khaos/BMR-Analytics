@@ -1,0 +1,35 @@
+{
+  "name": "analytics-dashboard",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@nivo/bar": "^0.85.0",
+    "@nivo/heatmap": "^0.85.0",
+    "@nivo/line": "^0.85.0",
+    "@nivo/sankey": "^0.85.0",
+    "autoprefixer": "^10.4.20",
+    "d3-array": "^3.2.4",
+    "date-fns": "^3.6.0",
+    "mongodb": "^6.8.0",
+    "next": "^15.5.4",
+    "postcss": "^8.4.38",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "tailwindcss": "^3.4.14"
+  },
+  "devDependencies": {
+    "@types/d3-array": "^3.2.1",
+    "@types/node": "^20.12.12",
+    "@types/react": "^18.2.45",
+    "@types/react-dom": "^18.2.18",
+    "eslint": "^8.57.0",
+    "eslint-config-next": "14.1.4",
+    "typescript": "^5.4.5"
+  }
+}
