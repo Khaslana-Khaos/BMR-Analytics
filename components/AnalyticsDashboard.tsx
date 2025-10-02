@@ -632,6 +632,8 @@ function DayInteractionDetails({
   data: AnalyticsResponse;
   selectedDate: string | null;
 }) {
+  const [topCount, setTopCount] = useState(10);
+
   const dayData = useMemo(() => {
     if (!selectedDate) return null;
 
@@ -646,72 +648,23 @@ function DayInteractionDetails({
 
     if (!daySessions.length) return null;
 
-    // Calculate category interactions for this day
-    const categoryStats = new Map<
-      string,
-      {
-        category: string;
-        views: number;
-        carts: number;
-        wish: number;
-        total: number;
-      }
-    >();
+    // For day-specific data, we'll use the overall category interactions
+    // scaled by the proportion of sessions on this day
+    const totalSessions = data.sessions.length;
+    const daySessionRatio =
+      totalSessions > 0 ? daySessions.length / totalSessions : 0;
 
-    // Process each session to count interactions by category
-    daySessions.forEach((session) => {
-      // For views - we need to estimate from session data
-      const viewsPerCategory = session.nView > 0 ? session.nView : 0;
-      const cartsPerCategory = session.nCartAdd > 0 ? session.nCartAdd : 0;
-
-      // Since we don't have item-level data in sessions, we'll use category interactions
-      // to estimate the distribution for this specific day
-      data.categoryInteractions.forEach((catInteraction) => {
-        const category = catInteraction.category;
-        const existing = categoryStats.get(category) || {
-          category,
-          views: 0,
-          carts: 0,
-          wish: 0,
-          total: 0,
-        };
-
-        // Proportionally distribute session interactions based on overall category popularity
-        const totalCategoryInteractions = data.categoryInteractions.reduce(
-          (sum, cat) => sum + cat.total,
-          0
-        );
-        const categoryWeight =
-          totalCategoryInteractions > 0
-            ? catInteraction.total / totalCategoryInteractions
-            : 0;
-
-        existing.views += Math.round(
-          viewsPerCategory *
-            categoryWeight *
-            (catInteraction.views / (catInteraction.total || 1))
-        );
-        existing.carts += Math.round(
-          cartsPerCategory *
-            categoryWeight *
-            (catInteraction.carts / (catInteraction.total || 1))
-        );
-        existing.wish += Math.round(
-          session.nView *
-            categoryWeight *
-            (catInteraction.wish / (catInteraction.total || 1)) *
-            0.1
-        ); // Estimate wishlist
-        existing.total = existing.views + existing.carts + existing.wish;
-
-        categoryStats.set(category, existing);
-      });
-    });
-
-    const categoryArray = Array.from(categoryStats.values())
+    // Scale the category interactions proportionally for this day
+    const categoryArray = data.categoryInteractions
+      .map((cat) => ({
+        category: cat.category,
+        views: Math.round(cat.views * daySessionRatio),
+        carts: Math.round(cat.carts * daySessionRatio),
+        wish: Math.round(cat.wish * daySessionRatio),
+        total: Math.round(cat.total * daySessionRatio),
+      }))
       .filter((cat) => cat.total > 0)
-      .sort((a, b) => b.total - a.total)
-      .slice(0, 10);
+      .sort((a, b) => b.total - a.total);
 
     // Get daily series data for the selected date
     const daySeriesData = data.daily.series.find(
@@ -723,10 +676,11 @@ function DayInteractionDetails({
       totalSessions: daySessions.length,
       totalViews: daySeriesData?.views || 0,
       totalCarts: daySeriesData?.carts || 0,
-      categories: categoryArray,
+      allCategories: categoryArray,
+      categories: categoryArray.slice(0, topCount),
       isAnomaly: data.daily.anomaly.outliers.includes(selectedDate),
     };
-  }, [data, selectedDate]);
+  }, [data, selectedDate, topCount]);
 
   if (!selectedDate) {
     return (
@@ -784,9 +738,31 @@ function DayInteractionDetails({
 
       {/* Category Breakdown */}
       <div>
-        <h4 className="mb-3 text-sm font-medium text-slate-300">
-          Most Active Categories
-        </h4>
+        <div className="flex items-center justify-between mb-3">
+          <h4 className="text-sm font-medium text-slate-300">
+            Most Active Categories
+          </h4>
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-slate-400">
+              Showing top {dayData.categories.length} of{" "}
+              {dayData.allCategories.length} categories
+            </span>
+            <div className="flex items-center gap-2">
+              <label className="text-sm text-slate-400">Show top:</label>
+              <select
+                value={topCount}
+                onChange={(e) => setTopCount(Number(e.target.value))}
+                className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+              >
+                {[5, 10, 15, 20, 25, 50].map((n) => (
+                  <option key={n} value={n}>
+                    {n}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+        </div>
         <div className="overflow-x-auto">
           <table className="min-w-full divide-y divide-slate-800 text-sm">
             <thead className="bg-slate-900/40 text-left text-xs uppercase tracking-wide text-slate-400">
@@ -812,16 +788,16 @@ function DayInteractionDetails({
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-blue-300">
+                  <td className="px-4 py-3 text-slate-300">
                     {category.views.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-emerald-300">
-                    {category.carts.toLocaleString()}
-                  </td>
-                  <td className="px-4 py-3 text-purple-300">
+                  <td className="px-4 py-3 text-slate-300">
                     {category.wish.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 font-semibold text-slate-100">
+                  <td className="px-4 py-3 text-slate-300">
+                    {category.carts.toLocaleString()}
+                  </td>
+                  <td className="px-4 py-3 text-slate-100">
                     {category.total.toLocaleString()}
                   </td>
                 </tr>
