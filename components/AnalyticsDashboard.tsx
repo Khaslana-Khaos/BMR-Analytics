@@ -12,7 +12,8 @@ import {
   isWithinInterval,
   format,
 } from "date-fns";
-import type { AnalyticsResponse } from "@/lib/analytics";
+import { AnalyticsResponse } from "@/lib/analytic.service";
+// Removed reactstrap dependency - using standard HTML elements instead
 
 interface AnalyticsDashboardProps {
   initialData: AnalyticsResponse;
@@ -308,12 +309,12 @@ function PurchaseFunnelByPrice({ data }: ChartProps) {
   })();
 
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid gap-6 lg:grid-cols-2">
-        <div className="space-y-4">
-          <label className="text-sm text-slate-400">Choose tier</label>
+    <div className="tw-flex tw-flex-col tw-gap-6">
+      <div className="tw-grid tw-gap-6 lg:tw-grid-cols-2">
+        <div className="tw-space-y-4">
+          <label className="tw-text-sm tw-text-slate-400">Choose tier</label>
           <select
-            className="w-full rounded-lg border border-slate-700 bg-slate-900/60 p-3 text-slate-100"
+            className="tw-w-full tw-rounded-lg tw-border tw-border-slate-700 tw-bg-white tw-p-3 tw-black"
             value={selectedTier}
             onChange={(e) => setSelectedTier(e.target.value as PriceTier)}
           >
@@ -323,44 +324,48 @@ function PurchaseFunnelByPrice({ data }: ChartProps) {
               </option>
             ))}
           </select>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl bg-slate-900/80 p-4">
-              <p className="text-xs uppercase text-slate-400">View → Cart</p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-300">
+
+          <div className="tw-grid tw-grid-cols-2 tw-gap-4 tw-card">
+            <div className="tw-rounded-xl tw-bg-white shadow tw-p-4">
+              <p className="tw-text-xs tw-uppercase tw-text-slate-600">
+                View → Cart
+              </p>
+              <p className="tw-mt-2 tw-text-2xl tw-font-semibold tw-text-emerald-300">
                 {pct(tier.pViewToCart)}
               </p>
             </div>
-            <div className="rounded-xl bg-slate-900/80 p-4">
-              <p className="text-xs uppercase text-slate-400">
+            <div className="tw-rounded-xl tw-bg-white shadow tw-p-4">
+              <p className="tw-text-xs tw-uppercase tw-text-black">
                 Cart → Checkout proxy
               </p>
-              <p className="mt-2 text-2xl font-semibold text-sky-300">
+              <p className="tw-mt-2 tw-text-2xl tw-font-semibold tw-text-sky-300">
                 {pct(tier.pCartToCheckout)}
               </p>
             </div>
           </div>
         </div>
-        <div className="space-y-4">
-          <label className="text-sm text-slate-400">
+
+        <div className="tw-space-y-4">
+          <label className="tw-text-sm tw-text-slate-600">
             Custom price range (£)
           </label>
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="tw-flex tw-flex-col tw-gap-3 sm:tw-flex-row sm:tw-items-center">
             <input
               type="number"
               step="0.01"
               placeholder="From £"
-              className="w-full rounded-lg border border-slate-700 bg-slate-900/60 p-3 text-slate-100"
+              className="tw-w-full tw-rounded-lg tw-border tw-border-slate-700 tw-bg-white shadow tw-p-3 tw-text-slate-700"
               value={rangeState.min}
               onChange={(e) =>
                 setRangeState((p) => ({ ...p, min: e.target.value }))
               }
             />
-            <span className="text-center text-slate-400">to</span>
+            <span className="tw-text-center tw-text-slate-400">to</span>
             <input
               type="number"
               step="0.01"
               placeholder="To £"
-              className="w-full rounded-lg border border-slate-700 bg-slate-900/60 p-3 text-slate-100"
+              className="tw-w-full tw-rounded-lg tw-border tw-border-slate-700 tw-bg-white shadow tw-p-3 tw-text-slate-700"
               value={rangeState.max}
               onChange={(e) =>
                 setRangeState((p) => ({ ...p, max: e.target.value }))
@@ -369,36 +374,40 @@ function PurchaseFunnelByPrice({ data }: ChartProps) {
             <button
               type="button"
               onClick={applyRange}
-              className="rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-700"
+              className="tw-rounded-lg tw-border tw-bg-green-700 tw-px-4 tw-py-2 tw-text-sm tw-font-medium tw-text-slate-100 hover:tw-bg-slate-700"
             >
               Apply
             </button>
           </div>
-          <div className="grid grid-cols-2 gap-4">
-            <div className="rounded-xl bg-slate-900/80 p-4">
-              <p className="text-xs uppercase text-slate-400">View → Cart</p>
-              <p className="mt-2 text-2xl font-semibold text-emerald-200">
+
+          <div className="tw-grid tw-grid-cols-2 tw-gap-4">
+            <div className="tw-rounded-xl tw-bg-white shadow tw-p-4">
+              <p className="tw-text-xs tw-uppercase tw-text-black">
+                View → Cart
+              </p>
+              <p className="tw-mt-2 tw-text-2xl tw-font-semibold tw-text-emerald-200">
                 {pct(rangeMetrics.viewRate)}
               </p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="tw-mt-1 tw-text-xs tw-text-black">
                 n={rangeMetrics.views} views → {rangeMetrics.viewToCart} carts
               </p>
             </div>
-            <div className="rounded-xl bg-slate-900/80 p-4">
-              <p className="text-xs uppercase text-slate-400">
+            <div className="tw-rounded-xl tw-bg-white shadow tw-p-4">
+              <p className="tw-text-xs tw-uppercase tw-text-black">
                 Cart → Checkout proxy
               </p>
-              <p className="mt-2 text-2xl font-semibold text-sky-200">
+              <p className="tw-mt-2 tw-text-2xl tw-font-semibold tw-text-sky-200">
                 {pct(rangeMetrics.checkoutRate)}
               </p>
-              <p className="mt-1 text-xs text-slate-400">
+              <p className="tw-mt-1 tw-text-xs tw-text-black">
                 adds={rangeMetrics.adds}, removes={rangeMetrics.removes}
               </p>
             </div>
           </div>
         </div>
       </div>
-      <p className="caption">{cap}</p>
+
+      <p className="tw-caption">{cap}</p>
     </div>
   );
 }
@@ -448,8 +457,8 @@ function TransitionHeatmap({ data }: ChartProps) {
     return <p className="muted">Not enough events to chart transitions yet.</p>;
 
   return (
-    <div className="space-y-4">
-      <div className="h-[360px] w-full">
+    <div className="tw-space-y-4">
+      <div className="tw-h-[360px] tw-w-full">
         <ResponsiveHeatMap
           data={heatmapData}
           colors={{ type: "quantize", scheme: "blues" } as any}
@@ -460,20 +469,21 @@ function TransitionHeatmap({ data }: ChartProps) {
           axisLeft={{ tickSize: 5, tickPadding: 5 }}
           valueFormat={(v) => pct(Number(v))}
           tooltip={({ cell }: any) => (
-            <div className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg">
-              <p className="font-medium">
+            <div className="tw-rounded-lg tw-bg-slate-900 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100 tw-shadow-lg">
+              <p className="tw-font-medium">
                 {cell.serieId} → {cell.x}
               </p>
-              <p className="text-emerald-300">{pct(Number(cell.value))}</p>
+              <p className="tw-text-emerald-300">{pct(Number(cell.value))}</p>
             </div>
           )}
           theme={{
             tooltip: { container: { background: "#0f172a" } },
-            text: { fill: "#e2e8f0" },
+            text: { fill: "#294972ff" },
           }}
         />
       </div>
-      <div className="space-y-2 text-sm text-slate-300">
+
+      <div className="tw-space-y-2 tw-text-sm tw-text-slate-600">
         {sentences.map((s) => (
           <p key={s}>{s}</p>
         ))}
@@ -532,7 +542,7 @@ function SankeyFlow({ data }: ChartProps) {
     return <p className="muted">No flow events recorded yet.</p>;
 
   return (
-    <div className="h-[520px] w-full">
+    <div className="tw-h-[520px] w-full">
       <ResponsiveSankey
         data={sankeyData}
         margin={{ top: 20, right: 180, bottom: 20, left: 20 }}
@@ -549,13 +559,13 @@ function SankeyFlow({ data }: ChartProps) {
           tooltip: { container: { background: "#60a5fa" } },
         }}
         nodeTooltip={({ node }: any) => (
-          <div className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg">
+          <div className="tw-rounded-lg tw-bg-slate-900 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100 tw-shadow-lg">
             {node.id}
           </div>
         )}
         linkTooltip={({ link }: any) => (
-          <div className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg">
-            <p className="font-medium">
+          <div className="tw-rounded-lg tw-bg-slate-900 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100 tw-shadow-lg">
+            <p className="tw-font-medium">
               {link.source.label} → {link.target.label}
             </p>
             <p>{Number(link.value).toLocaleString()} transitions</p>
@@ -581,13 +591,13 @@ function PriceBandsChart({ data }: ChartProps) {
 
   if (!chartData.length)
     return (
-      <p className="muted">
+      <p className="tw-muted">
         Price bands will appear once we have product prices.
       </p>
     );
 
   return (
-    <div className="h-[420px] w-full">
+    <div className="tw-h-[420px] tw-w-full">
       <ResponsiveBar
         data={chartData}
         keys={["View → Cart %", "Wishlist → Cart %"]}
@@ -604,16 +614,16 @@ function PriceBandsChart({ data }: ChartProps) {
         }}
         valueFormat={(v) => `${Number(v).toFixed(1)}%`}
         theme={{
-          text: { fill: "#e2e8f0" },
+          text: { fill: "#0b3469ff" },
           tooltip: { container: { background: "#0f172a" } },
         }}
         tooltip={({ value, indexValue, id, data: raw }: any) => (
-          <div className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg">
-            <p className="font-medium">{indexValue}</p>
+          <div className="tw-rounded-lg tw-bg-slate-900 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-500 tw-shadow-lg">
+            <p className="tw-font-medium">{indexValue}</p>
             <p>
               {String(id)}: {Number(value).toFixed(1)}%
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="tw-text-xs tw-text-slate-600">
               Views n={raw.nView?.toLocaleString?.() ?? 0}, Wishlist n=
               {raw.nWish?.toLocaleString?.() ?? 0}
             </p>
@@ -684,8 +694,8 @@ function DayInteractionDetails({
 
   if (!selectedDate) {
     return (
-      <div className="rounded-lg border border-slate-700 bg-slate-900/40 p-6 text-center">
-        <p className="text-slate-400">
+      <div className="tw-rounded-lg tw-border tw-border-slate-700 tw-bg-slate-900/60 tw-p-6 tw-text-center">
+        <p className="tw-text-slate-100">
           Click on a day in the chart above to see detailed interaction data
         </p>
       </div>
@@ -694,20 +704,22 @@ function DayInteractionDetails({
 
   if (!dayData) {
     return (
-      <div className="rounded-lg border border-slate-700 bg-slate-900/40 p-6 text-center">
-        <p className="text-slate-400">No data available for {selectedDate}</p>
+      <div className="tw-rounded-lg tw-border tw-border-slate-700 tw-bg-slate-900/40 tw-p-6 tw-text-center">
+        <p className="tw-text-slate-400">
+          No data available for {selectedDate}
+        </p>
       </div>
     );
   }
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h3 className="text-lg font-semibold text-slate-100">
+    <div className="tw-space-y-4">
+      <div className="tw-flex tw-items-center tw-justify-between">
+        <h3 className="tw-text-lg tw-font-semibold tw-text-slate-100">
           Interaction Details for{" "}
           {format(parseISO(selectedDate), "MMMM d, yyyy")}
           {dayData.isAnomaly && (
-            <span className="ml-2 rounded-full bg-red-500/20 px-2 py-1 text-xs text-red-300">
+            <span className="tw-ml-2 tw-rounded-full tw-bg-red-500/20 tw-px-2 tw-py-1 tw-text-xs tw-text-red-300">
               Anomaly
             </span>
           )}
@@ -715,22 +727,24 @@ function DayInteractionDetails({
       </div>
 
       {/* Summary Stats */}
-      <div className="grid gap-4 sm:grid-cols-3">
-        <div className="rounded-xl bg-slate-900/80 p-4">
-          <p className="text-xs uppercase text-slate-400">Sessions</p>
-          <p className="mt-2 text-2xl font-semibold text-slate-100">
+      <div className="tw-grid tw-gap-4 sm:tw-grid-cols-3">
+        <div className="tw-rounded-xl tw-bg-white shadow tw-p-4">
+          <p className="tw-text-xs tw-uppercase tw-text-slate-400">Sessions</p>
+          <p className="tw-mt-2 tw-text-2xl tw-font-semibold tw-text-slate-100">
             {dayData.totalSessions.toLocaleString()}
           </p>
         </div>
-        <div className="rounded-xl bg-slate-900/80 p-4">
-          <p className="text-xs uppercase text-slate-400">Total Views</p>
-          <p className="mt-2 text-2xl font-semibold text-blue-300">
+        <div className="tw-rounded-xl tw-bg-white shadow tw-p-4">
+          <p className="tw-text-xs tw-uppercase tw-text-slate-400">
+            Total Views
+          </p>
+          <p className="tw-mt-2 tw-text-2xl tw-font-semibold tw-text-blue-300">
             {dayData.totalViews.toLocaleString()}
           </p>
         </div>
-        <div className="rounded-xl bg-slate-900/80 p-4">
-          <p className="text-xs uppercase text-slate-400">Cart Adds</p>
-          <p className="mt-2 text-2xl font-semibold text-emerald-300">
+        <div className="tw-rounded-xl tw-bg-white shadow tw-p-4">
+          <p className="tw-text-xs tw-uppercase tw-text-slate-400">Cart Adds</p>
+          <p className="tw-mt-2 tw-text-2xl tw-font-semibold tw-text-emerald-300">
             {dayData.totalCarts.toLocaleString()}
           </p>
         </div>
@@ -738,21 +752,21 @@ function DayInteractionDetails({
 
       {/* Category Breakdown */}
       <div>
-        <div className="flex items-center justify-between mb-3">
-          <h4 className="text-sm font-medium text-slate-300">
+        <div className="tw-flex tw-items-center tw-justify-between tw-mb-3">
+          <h4 className="tw-text-sm tw-font-medium tw-text-slate-300">
             Most Active Categories
           </h4>
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-slate-400">
+          <div className="tw-flex tw-items-center tw-gap-2">
+            <span className="tw-text-xs tw-text-slate-400">
               Showing top {dayData.categories.length} of{" "}
               {dayData.allCategories.length} categories
             </span>
-            <div className="flex items-center gap-2">
-              <label className="text-sm text-slate-400">Show top:</label>
+            <div className="tw-flex tw-items-center tw-gap-2">
+              <label className="tw-text-sm tw-text-slate-400">Show top:</label>
               <select
                 value={topCount}
                 onChange={(e) => setTopCount(Number(e.target.value))}
-                className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+                className="tw-rounded-lg tw-border tw-border-slate-700 tw-bg-slate-900/60 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100"
               >
                 {[5, 10, 15, 20, 25, 50].map((n) => (
                   <option key={n} value={n}>
@@ -763,41 +777,43 @@ function DayInteractionDetails({
             </div>
           </div>
         </div>
-        <div className="overflow-x-auto">
-          <table className="min-w-full divide-y divide-slate-800 text-sm">
-            <thead className="bg-slate-900/40 text-left text-xs uppercase tracking-wide text-slate-400">
+
+        <div className="tw-overflow-x-auto">
+          <table className="tw-min-w-full tw-divide-y tw-divide-slate-800 tw-text-sm">
+            <thead className="tw-bg-slate-900/40 tw-text-left tw-text-xs tw-uppercase tw-tracking-wide tw-text-slate-400">
               <tr>
-                <th className="px-4 py-3">Category</th>
-                <th className="px-4 py-3">Views</th>
-                <th className="px-4 py-3">Cart Adds</th>
-                <th className="px-4 py-3">Wishlist</th>
-                <th className="px-4 py-3">Total</th>
+                <th className="tw-px-4 tw-py-3">Category</th>
+                <th className="tw-px-4 tw-py-3">Views</th>
+                <th className="tw-px-4 tw-py-3">Cart Adds</th>
+                <th className="tw-px-4 tw-py-3">Wishlist</th>
+                <th className="tw-px-4 tw-py-3">Total</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-slate-800">
+
+            <tbody className="tw-divide-y tw-divide-slate-800">
               {dayData.categories.map((category, index) => (
                 <tr
                   key={category.category}
-                  className={index === 0 ? "bg-emerald-500/5" : ""}
+                  className={index === 0 ? "tw-bg-emerald-500/5" : ""}
                 >
-                  <td className="px-4 py-3 font-medium text-slate-100">
+                  <td className="tw-px-4 tw-py-3 tw-font-medium tw-text-slate-100">
                     {category.category}
                     {index === 0 && (
-                      <span className="ml-2 text-xs text-emerald-400">
+                      <span className="tw-ml-2 tw-text-xs tw-text-emerald-400">
                         Most Popular
                       </span>
                     )}
                   </td>
-                  <td className="px-4 py-3 text-slate-300">
+                  <td className="tw-px-4 tw-py-3 tw-text-slate-300">
                     {category.views.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-slate-300">
+                  <td className="tw-px-4 tw-py-3 tw-text-slate-300">
                     {category.wish.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-slate-300">
+                  <td className="tw-px-4 tw-py-3 tw-text-slate-300">
                     {category.carts.toLocaleString()}
                   </td>
-                  <td className="px-4 py-3 text-slate-100">
+                  <td className="tw-px-4 tw-py-3 tw-text-slate-100">
                     {category.total.toLocaleString()}
                   </td>
                 </tr>
@@ -808,10 +824,11 @@ function DayInteractionDetails({
       </div>
 
       {dayData.isAnomaly && (
-        <div className="rounded-lg border border-red-500/30 bg-red-500/10 p-4">
-          <p className="text-sm text-red-300">
-            <span className="font-medium">Anomaly Detected:</span> This day had
-            unusually high or low cart activity compared to the normal range.
+        <div className="tw-rounded-lg tw-border tw-border-red-500/30 tw-bg-red-500/10 tw-p-4">
+          <p className="tw-text-sm tw-text-red-300">
+            <span className="tw-font-medium">Anomaly Detected:</span> This day
+            had unusually high or low cart activity compared to the normal
+            range.
           </p>
         </div>
       )}
@@ -845,8 +862,8 @@ function DailyTrends({ data }: ChartProps) {
   };
 
   return (
-    <div className="space-y-6">
-      <div className="h-[360px] w-full">
+    <div className="tw-space-y-6">
+      <div className="tw-h-[360px] tw-w-full">
         <ResponsiveLine
           data={chartData}
           margin={{ top: 40, right: 40, bottom: 60, left: 60 }}
@@ -864,16 +881,16 @@ function DailyTrends({ data }: ChartProps) {
           sliceTooltip={({ slice }: any) => {
             const date = slice.points[0]?.data?.x;
             return (
-              <div className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg border border-slate-600">
-                <div className="space-y-1">
-                  <p className="font-medium text-center">{date}</p>
+              <div className="tw-rounded-lg tw-bg-slate-900 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100 tw-shadow-lg tw-border tw-border-slate-600">
+                <div className="tw-space-y-1">
+                  <p className="tw-font-medium tw-text-center">{date}</p>
                   {slice.points.map((point: any) => (
                     <div
                       key={point.serieId}
-                      className="flex items-center gap-2"
+                      className="tw-flex tw-items-center tw-gap-2"
                     >
                       <div
-                        className="w-3 h-3 rounded-full"
+                        className="tw-w-3 tw-h-3 tw-rounded-full"
                         style={{ backgroundColor: point.serieColor }}
                       />
                       <span>
@@ -896,7 +913,7 @@ function DailyTrends({ data }: ChartProps) {
                         setSelectedDate(date as string);
                       }
                     }}
-                    className="w-full mt-2 px-2 py-1 text-xs bg-blue-600 hover:bg-blue-500 text-white rounded transition-colors cursor-pointer"
+                    className="tw-w-full tw-mt-2 tw-px-2 tw-py-1 tw-text-xs tw-bg-blue-600 hover:tw-bg-blue-500 tw-text-white tw-rounded tw-transition-colors tw-cursor-pointer"
                   >
                     🖱️ Click for details
                   </button>
@@ -911,36 +928,39 @@ function DailyTrends({ data }: ChartProps) {
           areaOpacity={0.2}
         />
       </div>
-      <div className="space-y-1 text-sm text-slate-300">
+
+      <div className="tw-space-y-1 tw-text-sm tw-text-slate-700">
         <p>
           Showing {series.length} days from {dateRange.from} to {dateRange.to}.
           Anomaly band: lower {anomaly.lower.toFixed(1)} carts, upper{" "}
           {anomaly.upper.toFixed(1)} carts.
         </p>
+
         {anomaly.hasThresholds && anomaly.outliers.length > 0 ? (
           <p>Outliers: {anomaly.outliers.join(", ")}</p>
         ) : (
-          <p className="text-slate-500">No cart anomalies detected.</p>
+          <p className="tw-text-slate-600">No cart anomalies detected.</p>
         )}
-        <p className="text-xs text-slate-400 mt-2">
+
+        <p className="tw-text-xs tw-text-slate-500 tw-mt-2">
           💡 Hover over any data point and click the blue button in the tooltip
           to see detailed interaction data
         </p>
 
         {/* Alternative: Direct date selection buttons */}
-        <div className="flex flex-wrap gap-2 mt-3">
-          <span className="text-xs text-slate-500">Quick select:</span>
+        <div className="tw-flex tw-flex-wrap tw-gap-2 tw-mt-3">
+          <span className="tw-text-xs tw-text-slate-500">Quick select:</span>
           {series.slice(0, 7).map((dataPoint) => (
             <button
               key={dataPoint.date}
               onClick={() => setSelectedDate(dataPoint.date)}
-              className="px-2 py-1 text-xs bg-slate-700 hover:bg-slate-600 text-slate-300 rounded transition-colors"
+              className="tw-px-2 tw-py-1 tw-text-xs tw-bg-slate-700 hover:tw-bg-slate-600 tw-text-slate-300 tw-rounded tw-transition-colors"
             >
               {dataPoint.date}
             </button>
           ))}
           {series.length > 7 && (
-            <span className="text-xs text-slate-500">...</span>
+            <span className="tw-text-xs tw-text-slate-500">...</span>
           )}
         </div>
       </div>
@@ -1006,17 +1026,17 @@ function CartLeakByCategory({ data }: ChartProps) {
     );
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-400">
+    <div className="tw-space-y-4">
+      <div className="tw-flex tw-items-center tw-justify-between">
+        <p className="tw-text-sm tw-text-slate-800">
           Showing top {rows.length} of {allRows.length} categories
         </p>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-400">Show top:</label>
+        <div className="tw-flex tw-items-center tw-gap-2">
+          <label className="tw-text-sm tw-text-slate-400">Show top:</label>
           <select
             value={topCount}
             onChange={(e) => setTopCount(Number(e.target.value))}
-            className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+            className="tw-rounded-lg tw-border tw-border-slate-700 tw-bg-slate-900/60 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100"
           >
             {[5, 10, 15, 20, 25, 50].map((n) => (
               <option key={n} value={n}>
@@ -1026,34 +1046,38 @@ function CartLeakByCategory({ data }: ChartProps) {
           </select>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-800 text-sm">
-          <thead className="bg-slate-900/40 text-left text-xs uppercase tracking-wide text-slate-400">
+
+      <div className="tw-overflow-x-auto">
+        <table className="tw-min-w-full tw-divide-y tw-divide-slate-800 tw-text-sm">
+          <thead className="tw-bg-slate-900/60 tw-text-left tw-text-xs tw-uppercase tw-tracking-wide tw-text-slate-100">
             <tr>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Adds</th>
-              <th className="px-4 py-3">Removes</th>
-              <th className="px-4 py-3">Leak</th>
+              <th className="tw-px-4 tw-py-3">Category</th>
+              <th className="tw-px-4 tw-py-3">Adds</th>
+              <th className="tw-px-4 tw-py-3">Removes</th>
+              <th className="tw-px-4 tw-py-3">Leak</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+
+          <tbody className="tw-divide-y tw-divide-slate-800">
             {rows.map((row) => (
               <tr key={row.category}>
-                <td className="px-4 py-3 font-medium text-slate-100">
+                <td className="tw-px-4 tw-py-3 tw-font-medium tw-text-slate-900">
                   {row.category}
                   {row.itemCount > 1 && (
-                    <span className="ml-2 text-xs text-slate-400">
+                    <span className="tw-ml-2 tw-text-xs tw-text-slate-600">
                       ({row.itemCount} items)
                     </span>
                   )}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-900">
                   {row.adds.toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-900">
                   {row.removes.toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-rose-300">{pct(row.leak)}</td>
+                <td className="tw-px-4 tw-py-3 tw-text-rose-600">
+                  {pct(row.leak)}
+                </td>
               </tr>
             ))}
           </tbody>
@@ -1091,17 +1115,17 @@ function MostInteractedCategories({ data }: ChartProps) {
     );
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-400">
+    <div className="tw-space-y-6">
+      <div className="tw-flex tw-items-center tw-justify-between">
+        <p className="tw-text-sm tw-text-slate-600">
           Showing top {chartData.length} of {all.length} categories
         </p>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-400">Show top:</label>
+        <div className="tw-flex tw-items-center tw-gap-2">
+          <label className="tw-text-sm tw-text-slate-400">Show top:</label>
           <select
             value={topCount}
             onChange={(e) => setTopCount(Number(e.target.value))}
-            className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+            className="tw-rounded-lg tw-border tw-border-slate-700 tw-bg-slate-900/60 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100"
           >
             {[5, 10, 15, 20, 25, 50].map((n) => (
               <option key={n} value={n}>
@@ -1111,7 +1135,7 @@ function MostInteractedCategories({ data }: ChartProps) {
           </select>
         </div>
       </div>
-      <div className="h-[420px] w-full">
+      <div className="tw-h-[420px] tw-w-full">
         <ResponsiveBar
           data={chartData}
           keys={["Views", "Wishlist Adds", "Cart Adds"]}
@@ -1123,12 +1147,12 @@ function MostInteractedCategories({ data }: ChartProps) {
           axisBottom={{ tickRotation: -45, legendOffset: 32 }}
           axisLeft={{ tickPadding: 5, tickSize: 5 }}
           theme={{
-            text: { fill: "#e2e8f0" },
-            tooltip: { container: { background: "#0f172a" } },
+            text: { fill: "#010e1dff" },
+            tooltip: { container: { background: "#ffffffff" } },
           }}
           tooltip={({ id, value, indexValue }: any) => (
-            <div className="rounded-lg bg-slate-900 px-3 py-2 text-sm text-slate-100 shadow-lg">
-              <p className="font-medium">{indexValue}</p>
+            <div className="tw-rounded-lg tw-bg-slate-900 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100 tw-shadow-lg">
+              <p className="tw-font-medium">{indexValue}</p>
               <p>
                 {String(id)}: {Number(value).toLocaleString()}
               </p>
@@ -1136,33 +1160,33 @@ function MostInteractedCategories({ data }: ChartProps) {
           )}
         />
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-800 text-sm">
-          <thead className="bg-slate-900/40 text-left text-xs uppercase tracking-wide text-slate-400">
+      <div className="tw-overflow-x-auto">
+        <table className="tw-min-w-full tw-divide-y tw-divide-slate-800 tw-text-sm">
+          <thead className="tw-bg-slate-900/60 tw-text-left tw-text-xs tw-uppercase tw-tracking-wide tw-text-slate-100">
             <tr>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Views</th>
-              <th className="px-4 py-3">Wishlist Adds</th>
-              <th className="px-4 py-3">Cart Adds</th>
-              <th className="px-4 py-3">Total</th>
+              <th className="tw-px-4 tw-py-3">Category</th>
+              <th className="tw-px-4 tw-py-3">Views</th>
+              <th className="tw-px-4 tw-py-3">Wishlist Adds</th>
+              <th className="tw-px-4 tw-py-3">Cart Adds</th>
+              <th className="tw-px-4 tw-py-3">Total</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="tw-divide-y tw-divide-slate-800">
             {chartData.map((r) => (
               <tr key={r.category}>
-                <td className="px-4 py-3 font-medium text-slate-100">
+                <td className="tw-px-4 tw-py-3 tw-font-medium tw-text-slate-600">
                   {r.category}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-600">
                   {r.Views.toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-600">
                   {r["Wishlist Adds"].toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-600">
                   {r["Cart Adds"].toLocaleString()}
                 </td>
-                <td className="px-4 py-3 text-slate-100">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-600">
                   {r.Total.toLocaleString()}
                 </td>
               </tr>
@@ -1197,17 +1221,17 @@ function ItemRecommender({ data }: ChartProps) {
     );
 
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <p className="text-sm text-slate-400">
+    <div className="tw-space-y-4">
+      <div className="tw-flex tw-items-center tw-justify-between">
+        <p className="tw-text-sm tw-text-slate-400">
           Showing top {recos.length} of {allRecos.length} recommendations
         </p>
-        <div className="flex items-center gap-2">
-          <label className="text-sm text-slate-400">Show top:</label>
+        <div className="tw-flex tw-items-center tw-gap-2">
+          <label className="tw-text-sm tw-text-slate-400">Show top:</label>
           <select
             value={topCount}
             onChange={(e) => setTopCount(Number(e.target.value))}
-            className="rounded-lg border border-slate-700 bg-slate-900/60 px-3 py-2 text-sm text-slate-100"
+            className="tw-rounded-lg tw-border tw-border-slate-700 tw-bg-slate-900/60 tw-px-3 tw-py-2 tw-text-sm tw-text-slate-100"
           >
             {[5, 10, 15, 20, 25, 50].map((n) => (
               <option key={n} value={n}>
@@ -1217,11 +1241,11 @@ function ItemRecommender({ data }: ChartProps) {
           </select>
         </div>
       </div>
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:gap-6">
-        <label className="text-sm text-slate-300">
+      <div className="tw-flex tw-flex-col tw-gap-3 sm:tw-flex-row sm:tw-items-center sm:tw-gap-6">
+        <label className="tw-text-sm tw-text-slate-500">
           Choose anchor item
           <select
-            className="mt-2 w-full rounded-lg border border-slate-700 bg-slate-900/60 p-3 text-slate-100"
+            className="tw-mt-2 tw-w-full tw-rounded-lg tw-border tw-border-slate-100 tw-bg-slate-900/60 tw-p-3 tw-text-slate-100"
             value={selected}
             onChange={(e) => setSelected(e.target.value)}
           >
@@ -1232,8 +1256,8 @@ function ItemRecommender({ data }: ChartProps) {
             ))}
           </select>
         </label>
-        <div className="rounded-xl bg-slate-900/80 p-4 text-sm text-slate-300">
-          <p className="font-medium text-slate-100">Anchor details</p>
+        <div className="tw-rounded-xl tw-bg-slate-900/60 tw-p-4 tw-text-sm tw-text-slate-300">
+          <p className="tw-font-medium tw-text-slate-100">Anchor details</p>
           <p>{meta[selected]?.title ?? "Unknown item"}</p>
           <p>
             £{meta[selected]?.price?.toFixed(2) ?? "0.00"} ·{" "}
@@ -1241,29 +1265,29 @@ function ItemRecommender({ data }: ChartProps) {
           </p>
         </div>
       </div>
-      <div className="overflow-x-auto">
-        <table className="min-w-full divide-y divide-slate-800 text-sm">
-          <thead className="bg-slate-900/40 text-left text-xs uppercase tracking-wide text-slate-400">
+      <div className="tw-overflow-x-auto">
+        <table className="tw-min-w-full tw-divide-y tw-divide-slate-800 tw-text-sm">
+          <thead className="tw-bg-slate-900/60 tw-text-left tw-text-xs tw-uppercase tw-tracking-wide tw-text-slate-100">
             <tr>
-              <th className="px-4 py-3">Recommended item</th>
-              <th className="px-4 py-3">Score</th>
-              <th className="px-4 py-3">Category</th>
-              <th className="px-4 py-3">Price</th>
+              <th className="tw-px-4 tw-py-3">Recommended item</th>
+              <th className="tw-px-4 tw-py-3">Score</th>
+              <th className="tw-px-4 tw-py-3">Category</th>
+              <th className="tw-px-4 tw-py-3">Price</th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-slate-800">
+          <tbody className="tw-divide-y tw-divide-slate-800">
             {recos.map((row) => (
               <tr key={`${selected}-${row.item}`}>
-                <td className="px-4 py-3 font-medium text-slate-100">
+                <td className="tw-px-4 tw-py-3 tw-font-medium tw-text-slate-700">
                   {meta[row.item]?.title ?? row.item}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-700">
                   {row.score.toFixed(3)}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-700">
                   {meta[row.item]?.category ?? "Unknown"}
                 </td>
-                <td className="px-4 py-3 text-slate-300">
+                <td className="tw-px-4 tw-py-3 tw-text-slate-700">
                   £{meta[row.item]?.price?.toFixed(2) ?? "0.00"}
                 </td>
               </tr>
@@ -1277,6 +1301,8 @@ function ItemRecommender({ data }: ChartProps) {
 
 // -------------------- main --------------------
 const AnalyticsDashboard = ({ initialData }: AnalyticsDashboardProps) => {
+  console.log(initialData, "initialData");
+
   // Pick a reasonable default range (current month if present, else full series)
   const monthRange = useMemo(() => {
     const now = new Date();
@@ -1336,210 +1362,249 @@ const AnalyticsDashboard = ({ initialData }: AnalyticsDashboardProps) => {
   }, [monthRange]);
 
   return (
-    <div className="space-y-8">
-      {/* Global Date Filter */}
-      <section className="card">
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
-            <div>
-              <h2 className="card-title">Global Date Range Filter</h2>
-              <p className="text-sm text-slate-400 mt-1">
-                Select date range and click Apply to filter ALL analytics. This
-                affects all charts, tables, and metrics below.
-              </p>
-              <p className="text-xs text-slate-500 mt-2">
-                Currently showing:{" "}
-                <span className="text-slate-300 font-medium">
+    <div className="page-content">
+      <div className="container-fluid">
+        {/* <div className=""> */}
+        <div className="tw-space-y-8">
+          {/* Global Date Filter */}
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <div className="tw-flex tw-flex-col tw-gap-4">
+              <div className="tw-flex tw-flex-col tw-gap-4 sm:tw-flex-row sm:tw-items-start sm:tw-justify-between">
+                <div>
+                  <h2 className="tw-card-title">Global Date Range Filter</h2>
+                  <p className="tw-text-sm tw-text-slate-700 tw-mt-1">
+                    Select date range and click Apply to filter ALL analytics.
+                    This affects all charts, tables, and metrics below.
+                  </p>
+                  <p className="tw-text-xs tw-text-slate-600 tw-mt-2">
+                    Currently showing:{" "}
+                    <span className="tw-text-slate-500 tw-font-medium">
+                      {applied.from === applied.to
+                        ? `${applied.from}`
+                        : `${applied.from} to ${applied.to}`}
+                    </span>
+                  </p>
+                </div>
+                <div className="tw-flex tw-flex-col tw-gap-3 tw-text-sm tw-text-slate-600 sm:tw-flex-row sm:tw-items-center sm:tw-gap-4">
+                  <label className="tw-flex tw-items-center tw-gap-2">
+                    <span className="tw-min-w-[40px]">From</span>
+                    <input
+                      type="date"
+                      value={dateRange.from}
+                      onChange={(e) =>
+                        handleDateRangeChange(e.target.value, dateRange.to)
+                      }
+                      className={`tw-rounded-lg tw-border tw-px-3 tw-py-2 tw-text-black focus:tw-outline-none ${
+                        validationError
+                          ? "tw-border-red-500 tw-bg-red-900/20 focus:tw-border-red-400"
+                          : "tw-border-slate-700 tw-bg-white focus:tw-border-slate-100"
+                      }`}
+                    />
+                  </label>
+                  <label className="tw-flex tw-items-center tw-gap-2">
+                    <span className="tw-min-w-[25px]">To</span>
+                    <input
+                      type="date"
+                      value={dateRange.to}
+                      onChange={(e) =>
+                        handleDateRangeChange(dateRange.from, e.target.value)
+                      }
+                      className={`tw-rounded-lg tw-border tw-px-3 tw-py-2 tw-text-black focus:tw-outline-none ${
+                        validationError
+                          ? "tw-border-red-500 tw-bg-red-900/20 focus:tw-border-red-400"
+                          : "tw-border-slate-700 tw-bg-white focus:tw-border-slate-100"
+                      }`}
+                    />
+                  </label>
+                </div>
+              </div>
+              {validationError && (
+                <div className="tw-rounded-lg tw-border tw-border-red-500 tw-bg-red-900/20 tw-px-4 tw-py-3 tw-text-sm tw-text-red-300">
+                  <span className="tw-font-medium">Validation Error:</span>{" "}
+                  {validationError}
+                </div>
+              )}
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-justify-end">
+                <button
+                  type="button"
+                  onClick={applyDateRange}
+                  disabled={!!validationError}
+                  className={`tw-rounded-lg tw-border tw-px-6 tw-py-2 tw-text-sm tw-font-medium focus:tw-outline-none focus:tw-ring-2 ${
+                    validationError
+                      ? "tw-border-slate-600 tw-bg-slate-800 tw-text-slate-500 tw-cursor-not-allowed"
+                      : "tw-border-emerald-600 tw-bg-green-700 tw-text-white hover:tw-bg-emerald-600 focus:tw-ring-emerald-500"
+                  }`}
+                >
+                  Apply Date Range
+                </button>
+                <button
+                  type="button"
+                  onClick={resetToCurrentMonth}
+                  className="tw-rounded-lg tw-border  tw-border-white tw-bg-green-700 tw-text-white tw-px-4 tw-py-2 tw-text-sm tw-font-medium hover:tw-bg-green-800"
+                >
+                  Reset to Current Month
+                </button>
+              </div>
+            </div>
+          </div>
+
+          {/* Summary Statistics */}
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-grid tw-gap-4 sm:tw-grid-cols-2 xl:tw-grid-cols-4">
+              <div className="tw-card">
+                <h2 className="tw-text-sm tw-uppercase tw-tracking-wide tw-text-slate-400">
+                  Total Sessions
+                </h2>
+                <p className="tw-mt-2 tw-text-3xl tw-font-semibold">
+                  {filtered.sessions.length.toLocaleString()}
+                </p>
+                <p className="tw-text-xs tw-text-slate-500 tw-mt-1">
                   {applied.from === applied.to
-                    ? `${applied.from}`
+                    ? `On ${applied.from}`
                     : `${applied.from} to ${applied.to}`}
-                </span>
-              </p>
-            </div>
-            <div className="flex flex-col gap-3 text-sm text-slate-300 sm:flex-row sm:items-center sm:gap-4">
-              <label className="flex items-center gap-2">
-                <span className="min-w-[40px]">From</span>
-                <input
-                  type="date"
-                  value={dateRange.from}
-                  onChange={(e) =>
-                    handleDateRangeChange(e.target.value, dateRange.to)
-                  }
-                  className={`rounded-lg border px-3 py-2 text-slate-100 focus:outline-none ${
-                    validationError
-                      ? "border-red-500 bg-red-900/20 focus:border-red-400"
-                      : "border-slate-700 bg-slate-900/60 focus:border-slate-500"
-                  }`}
-                />
-              </label>
-              <label className="flex items-center gap-2">
-                <span className="min-w-[25px]">To</span>
-                <input
-                  type="date"
-                  value={dateRange.to}
-                  onChange={(e) =>
-                    handleDateRangeChange(dateRange.from, e.target.value)
-                  }
-                  className={`rounded-lg border px-3 py-2 text-slate-100 focus:outline-none ${
-                    validationError
-                      ? "border-red-500 bg-red-900/20 focus:border-red-400"
-                      : "border-slate-700 bg-slate-900/60 focus:border-slate-500"
-                  }`}
-                />
-              </label>
-            </div>
+                </p>
+              </div>
+              <div className="tw-card">
+                <h2 className="tw-text-sm tw-uppercase tw-tracking-wide tw-text-slate-400">
+                  Total Visitors
+                </h2>
+                <p className="tw-mt-2 tw-text-3xl tw-font-semibold">
+                  {new Set(
+                    filtered.sessions.map((s) => s.visitorId)
+                  ).size.toLocaleString()}
+                </p>
+                <p className="tw-text-xs tw-text-slate-500 tw-mt-1">
+                  Unique visitors in range
+                </p>
+              </div>
+              <div className="tw-card">
+                <h2 className="tw-text-sm tw-uppercase tw-tracking-wide tw-text-slate-400">
+                  Conversion Rate
+                </h2>
+                <p className="tw-mt-2 tw-text-3xl tw-font-semibold">
+                  {filtered.sessions.length
+                    ? (
+                        (filtered.sessions.filter((s) => s.nCartAdd > 0)
+                          .length /
+                          filtered.sessions.length) *
+                        100
+                      ).toFixed(1)
+                    : "0.0"}
+                  %
+                </p>
+                <p className="tw-text-xs tw-text-slate-500 tw-mt-1">
+                  Sessions with cart adds
+                </p>
+              </div>
+              <div className="tw-card">
+                <h2 className="tw-text-sm tw-uppercase tw-tracking-wide tw-text-slate-400">
+                  Total Carts
+                </h2>
+                <p className="tw-mt-2 tw-text-3xl tw-font-semibold">
+                  {filtered.sessions
+                    .reduce((a, s) => a + s.nCartAdd, 0)
+                    .toLocaleString()}
+                </p>
+                <p className="tw-text-xs tw-text-slate-500 tw-mt-1">
+                  Cart additions in range
+                </p>
+              </div>
+            </section>
           </div>
-          {validationError && (
-            <div className="rounded-lg border border-red-500 bg-red-900/20 px-4 py-3 text-sm text-red-300">
-              <span className="font-medium">Validation Error:</span>{" "}
-              {validationError}
-            </div>
-          )}
-          <div className="flex flex-col gap-2 sm:flex-row sm:justify-end">
-            <button
-              type="button"
-              onClick={applyDateRange}
-              disabled={!!validationError}
-              className={`rounded-lg border px-6 py-2 text-sm font-medium focus:outline-none focus:ring-2 ${
-                validationError
-                  ? "border-slate-600 bg-slate-800 text-slate-500 cursor-not-allowed"
-                  : "border-emerald-600 bg-emerald-700 text-white hover:bg-emerald-600 focus:ring-emerald-500"
-              }`}
-            >
-              Apply Date Range
-            </button>
-            <button
-              type="button"
-              onClick={resetToCurrentMonth}
-              className="rounded-lg border border-slate-600 bg-slate-800 px-4 py-2 text-sm font-medium text-slate-100 hover:bg-slate-700"
-            >
-              Reset to Current Month
-            </button>
+          {/* Charts */}
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title">Purchase funnel by price</h2>
+                <p className="tw-text-xs tw-text-slate-500">
+                  Filtered by date range
+                </p>
+              </div>
+              <PurchaseFunnelByPrice data={filtered} />
+            </section>
+          </div>
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title">
+                  Event transition probabilities
+                </h2>
+                <p className="tw-text-xs tw-text-slate-500">
+                  Filtered by date range
+                </p>
+              </div>
+              <TransitionHeatmap data={filtered} />
+            </section>
+          </div>
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title">Event flow (Sankey)</h2>
+                <p className="tw-text-xs tw-text-slate-500">
+                  Filtered by date range
+                </p>
+              </div>
+              <SankeyFlow data={filtered} />
+            </section>
+          </div>
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title">Conversion by price band</h2>
+                <p className="tw-text-xs tw-text-slate-700">
+                  Filtered by date range
+                </p>
+              </div>
+              <PriceBandsChart data={filtered} />
+            </section>
+          </div>
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-4 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title sm:tw-mb-0">
+                  Daily trends & anomaly flags
+                </h2>
+                <p className="tw-muted">Filtered by date range above</p>
+              </div>
+              <DailyTrends data={filtered} />
+            </section>
+          </div>
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title">Most interacted categories</h2>
+                <p className="tw-text-xs tw-text-slate-600">
+                  Filtered by date range
+                </p>
+              </div>
+              <MostInteractedCategories data={filtered} />
+            </section>
+          </div>
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title">Cart leak by category</h2>
+                <p className="tw-text-xs tw-text-slate-600">
+                  Filtered by date range
+                </p>
+              </div>
+              <CartLeakByCategory data={filtered} />
+            </section>
+          </div>
+          <div className="tw-bg-white tw-rounded-lg tw-shadow tw-p-4">
+            <section className="tw-card">
+              <div className="tw-flex tw-flex-col tw-gap-2 sm:tw-flex-row sm:tw-items-center sm:tw-justify-between">
+                <h2 className="tw-card-title">Item-to-item recommendations</h2>
+                <p className="tw-text-xs tw-text-slate-600">
+                  Filtered by date range
+                </p>
+              </div>
+              <ItemRecommender data={filtered} />
+            </section>
           </div>
         </div>
-      </section>
-
-      {/* Summary Statistics */}
-      <section className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
-        <div className="card">
-          <h2 className="text-sm uppercase tracking-wide text-slate-400">
-            Total Sessions
-          </h2>
-          <p className="mt-2 text-3xl font-semibold">
-            {filtered.sessions.length.toLocaleString()}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            {applied.from === applied.to
-              ? `On ${applied.from}`
-              : `${applied.from} to ${applied.to}`}
-          </p>
-        </div>
-        <div className="card">
-          <h2 className="text-sm uppercase tracking-wide text-slate-400">
-            Total Visitors
-          </h2>
-          <p className="mt-2 text-3xl font-semibold">
-            {new Set(
-              filtered.sessions.map((s) => s.visitorId)
-            ).size.toLocaleString()}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">
-            Unique visitors in range
-          </p>
-        </div>
-        <div className="card">
-          <h2 className="text-sm uppercase tracking-wide text-slate-400">
-            Conversion Rate
-          </h2>
-          <p className="mt-2 text-3xl font-semibold">
-            {filtered.sessions.length
-              ? (
-                  (filtered.sessions.filter((s) => s.nCartAdd > 0).length /
-                    filtered.sessions.length) *
-                  100
-                ).toFixed(1)
-              : "0.0"}
-            %
-          </p>
-          <p className="text-xs text-slate-500 mt-1">Sessions with cart adds</p>
-        </div>
-        <div className="card">
-          <h2 className="text-sm uppercase tracking-wide text-slate-400">
-            Total Carts
-          </h2>
-          <p className="mt-2 text-3xl font-semibold">
-            {filtered.sessions
-              .reduce((a, s) => a + s.nCartAdd, 0)
-              .toLocaleString()}
-          </p>
-          <p className="text-xs text-slate-500 mt-1">Cart additions in range</p>
-        </div>
-      </section>
-
-      {/* Charts */}
-      <section className="card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title">Purchase funnel by price</h2>
-          <p className="text-xs text-slate-500">Filtered by date range</p>
-        </div>
-        <PurchaseFunnelByPrice data={filtered} />
-      </section>
-
-      <section className="card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title">Event transition probabilities</h2>
-          <p className="text-xs text-slate-500">Filtered by date range</p>
-        </div>
-        <TransitionHeatmap data={filtered} />
-      </section>
-
-      <section className="card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title">Event flow (Sankey)</h2>
-          <p className="text-xs text-slate-500">Filtered by date range</p>
-        </div>
-        <SankeyFlow data={filtered} />
-      </section>
-
-      <section className="card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title">Conversion by price band</h2>
-          <p className="text-xs text-slate-500">Filtered by date range</p>
-        </div>
-        <PriceBandsChart data={filtered} />
-      </section>
-
-      <section className="card">
-        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title sm:mb-0">Daily trends & anomaly flags</h2>
-          <p className="muted">Filtered by date range above</p>
-        </div>
-        <DailyTrends data={filtered} />
-      </section>
-
-      <section className="card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title">Most interacted categories</h2>
-          <p className="text-xs text-slate-500">Filtered by date range</p>
-        </div>
-        <MostInteractedCategories data={filtered} />
-      </section>
-
-      <section className="card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title">Cart leak by category</h2>
-          <p className="text-xs text-slate-500">Filtered by date range</p>
-        </div>
-        <CartLeakByCategory data={filtered} />
-      </section>
-
-      <section className="card">
-        <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
-          <h2 className="card-title">Item-to-item recommendations</h2>
-          <p className="text-xs text-slate-500">Filtered by date range</p>
-        </div>
-        <ItemRecommender data={filtered} />
-      </section>
+        {/* </div> */}
+      </div>
     </div>
   );
 };

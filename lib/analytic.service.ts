@@ -135,18 +135,66 @@ function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
 }
 
-function strId(value: unknown): string | null {
+// function strId(value: unknown): string | null {
+//     if (!value) return null;
+//     if (typeof value === "string") return value;
+//     if (typeof value === "object") {
+//         if ("$oid" in (value as Record<string, unknown>)) {
+//             const oid = (value as Record<string, unknown>)["$oid"];
+//             if (typeof oid === "string") return oid;
+//         }
+//         if ("_id" in (value as Record<string, unknown>)) {
+//             return strId((value as Record<string, unknown>)["_id"]);
+//         }
+//     }
+//     return String(value);
+// }
+
+export function strId(value: unknown, seen = new WeakSet()): string | null {
   if (!value) return null;
+
+  // Handle strings
   if (typeof value === "string") return value;
-  if (typeof value === "object") {
-    if ("$oid" in (value as Record<string, unknown>)) {
-      const oid = (value as Record<string, unknown>)["$oid"];
-      if (typeof oid === "string") return oid;
-    }
-    if ("_id" in (value as Record<string, unknown>)) {
-      return strId((value as Record<string, unknown>)["_id"]);
+
+  // Handle ObjectId-like objects (MongoDB ObjectId or Mongoose ObjectId)
+  if (value && typeof value === "object" && "toString" in value) {
+    const str = value.toString();
+    // Check if it looks like an ObjectId (24 hex characters)
+    if (/^[0-9a-fA-F]{24}$/.test(str)) {
+      return str;
     }
   }
+
+  // Stop if we’ve already seen this object (avoid circular reference)
+  if (typeof value === "object") {
+    if (seen.has(value as object)) {
+      console.warn("⚠️ Circular reference detected in strId:", value);
+      return null;
+    }
+    seen.add(value as object);
+
+    const obj = value as Record<string, unknown>;
+
+    // Mongo-style $oid
+    if (typeof obj["$oid"] === "string") {
+      return obj["$oid"];
+    }
+
+    // Recursively check _id
+    if ("_id" in obj) {
+      return strId(obj["_id"], seen);
+    }
+
+    // If the object itself has a toString returning an ObjectId-like string
+    if (
+      typeof obj.toString === "function" &&
+      obj.toString() !== "[object Object]"
+    ) {
+      return obj.toString();
+    }
+  }
+
+  // Fallback
   return String(value);
 }
 
@@ -1004,11 +1052,9 @@ function computeAnalyticsFromDocs(
 export async function computeAnalyticsFromMongo(
   db: Db
 ): Promise<AnalyticsResponse> {
-  const LISTINGS_COLLECTION = process.env.LISTINGS_COLLECTION ?? "listing";
-  const TRACKING_COLLECTION =
-    process.env.TRACKING_COLLECTION ?? "customer_tracking_synthetic";
-  const PRODUCT_CATEGORIES_COLLECTION =
-    process.env.PRODUCT_CATEGORIES_COLLECTION ?? "productcategories";
+  const LISTINGS_COLLECTION = "listings";
+  const TRACKING_COLLECTION = "customervisits";
+  const PRODUCT_CATEGORIES_COLLECTION = "productcategories";
 
   const [listings, tracking, categories] = await Promise.all([
     db.collection(LISTINGS_COLLECTION).find({}).limit(5000).toArray(),

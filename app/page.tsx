@@ -1,7 +1,7 @@
 import { MongoClient } from "mongodb";
 import AnalyticsDashboard from "@/components/AnalyticsDashboard";
-import type { AnalyticsResponse } from "@/lib/analytics";
-import { computeAnalyticsFromMongo } from "@/lib/analytics";
+import type { AnalyticsResponse } from "@/lib/analytic.service";
+import { computeAnalyticsFromMongo } from "@/lib/analytic.service";
 
 const DB_NAME = process.env.DB_NAME ?? "BMR";
 const MONGO_URI = process.env.MONGO_URI;

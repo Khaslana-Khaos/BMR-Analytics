@@ -70,7 +70,7 @@ The cart leak analysis tracks items that are added to cart but then removed, pro
 
 ### Usage in Components
 
-The `CartLeakByCategory` component in `components/Charts.tsx` processes the leak data:
+The `CartLeakByCategory` component in `components/AnalyticsDashboard.tsx` processes the leak data:
 
 - Groups individual item leak data by category
 - Combines uncategorized items into "Other" category
