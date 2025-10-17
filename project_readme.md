@@ -23,6 +23,7 @@ This is a Next.js analytics dashboard that provides comprehensive e-commerce ana
     nView: number;
     nCartAdd: number;
     nCartRemove: number;
+    nCheckout: number;
   }>;
   leak: {
     overall: number;
@@ -48,6 +49,49 @@ This is a Next.js analytics dashboard that provides comprehensive e-commerce ana
   __version: string;
 }
 ```
+
+## Checkout Tracking
+
+### Overview
+
+The analytics system now supports direct checkout tracking through the new backend structure. The `checkoutItems` field provides real-time data on items that have been checked out, enabling accurate conversion funnel analysis.
+
+### Data Structure
+
+The new backend structure includes a direct `checkoutItems` array:
+
+```typescript
+{
+  "checkoutItems": [
+    {
+      "item": {
+        "$oid": "68dfaf309066c16d6c3d3ce2"
+      },
+      "deleted": false,
+      "createdAt": {
+        "$date": "2025-10-06T13:32:00.178Z"
+      },
+      "updatedAt": {
+        "$date": "2025-10-06T13:32:00.178Z"
+      }
+    }
+  ]
+}
+```
+
+### Analytics Integration
+
+- **Session Events**: Checkout items are processed as session events with type "checkout"
+- **Transition Matrix**: Checkout events are included in the user journey transition analysis
+- **Conversion Metrics**: Sessions now include `nCheckout` count for conversion rate calculations
+- **Funnel Analysis**: Complete view-to-cart-to-checkout funnel tracking
+
+### Benefits
+
+- **Real-time Data**: No more proxy calculations - direct checkout tracking
+- **Accurate Metrics**: Precise conversion rates and funnel analysis
+- **Complete Journey**: Full user journey from view to checkout
+- **Better Insights**: Enhanced understanding of conversion patterns
 
 ## Cart Leak Analysis
 
@@ -183,6 +227,10 @@ Several components now include dropdown controls to limit the number of items di
 
 ## Recent Updates
 
+- **🛒 DIRECT CHECKOUT TRACKING**: Added support for direct `checkoutItems` from the new backend structure, eliminating the need for proxy calculations
+- **📊 CHECKOUT ANALYTICS**: New checkout tracking provides insights into conversion funnel completion rates
+- **🔄 ENHANCED TRANSITION MATRIX**: Updated transition matrix to include checkout events for complete user journey analysis
+- **📈 IMPROVED CONVERSION METRICS**: Sessions now include `nCheckout` count for better conversion rate calculations
 - **🔥 CONSOLIDATED ALL COMPONENTS**: Combined all analytics components into a single `AnalyticsDashboard.tsx` file for better maintainability
 - **📊 GLOBAL DATE FILTERING ON ALL CHARTS**: Every graph, table, and metric now responds to the global date range filter
 - **🎯 ENHANCED DATA RECALCULATION**: Cart leak analysis, category interactions, and summary statistics are recalculated based on filtered sessions

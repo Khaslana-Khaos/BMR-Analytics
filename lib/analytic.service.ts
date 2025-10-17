@@ -20,10 +20,12 @@ type Session = {
   nView: number;
   nCartAdd: number;
   nCartRemove: number;
+  nCheckout: number;
   uniqueItems: Set<string>;
   views: SessionEvent[];
   carts: SessionEvent[];
   wish: SessionEvent[];
+  checkout: SessionEvent[];
 };
 
 type ItemMeta = Record<
@@ -43,7 +45,8 @@ type TransitionEvent = {
     | "cart_add"
     | "cart_remove"
     | "wishlist_add"
-    | "wishlist_remove";
+    | "wishlist_remove"
+    | "checkout";
   itemId: string;
   price: number;
 };
@@ -57,6 +60,7 @@ export type AnalyticsResponse = {
     nView: number;
     nCartAdd: number;
     nCartRemove: number;
+    nCheckout: number;
   }>;
   leak: {
     overall: number;
@@ -129,7 +133,8 @@ type MarkovSummary = {
   max: number;
 };
 
-const VERSION = "v2025-10-02b: price-range+catmap+reset-month (Next.js)";
+const VERSION =
+  "v2025-10-06: checkout-tracking+direct-checkout-items (Next.js)";
 
 function clampValue(value: number, min: number, max: number) {
   return Math.min(Math.max(value, min), max);
@@ -305,6 +310,7 @@ function collectSessionEvents(doc: RawDoc): Session {
   const views: SessionEvent[] = [];
   const carts: SessionEvent[] = [];
   const wish: SessionEvent[] = [];
+  const checkout: SessionEvent[] = [];
 
   for (const raw of doc?.viewItems ?? []) {
     const id = strId(raw?.item);
@@ -337,13 +343,28 @@ function collectSessionEvents(doc: RawDoc): Session {
     }
   }
 
+  // Process checkoutItems from the new backend structure
+  for (const raw of doc?.checkoutItems ?? []) {
+    const id = strId(raw?.item);
+    if (!id) continue;
+    const time = parseDate(raw?.createdAt) ?? ts;
+    const removed = Boolean(raw?.deleted);
+    checkout.push({ itemId: id, ts: time, add: 1, remove: 0 });
+    if (removed) {
+      const rt = parseDate(raw?.updatedAt) ?? time;
+      checkout.push({ itemId: id, ts: rt, add: 0, remove: 1 });
+    }
+  }
+
   const nView = views.length;
   const nCartAdd = carts.reduce((acc, evt) => acc + (evt.add ?? 0), 0);
   const nCartRemove = carts.reduce((acc, evt) => acc + (evt.remove ?? 0), 0);
+  const nCheckout = checkout.reduce((acc, evt) => acc + (evt.add ?? 0), 0);
   const uniqueItems = new Set<string>([
     ...views.map((evt) => evt.itemId),
     ...carts.map((evt) => evt.itemId),
     ...wish.map((evt) => evt.itemId),
+    ...checkout.map((evt) => evt.itemId),
   ]);
 
   return {
@@ -354,10 +375,12 @@ function collectSessionEvents(doc: RawDoc): Session {
     nView,
     nCartAdd,
     nCartRemove,
+    nCheckout,
     uniqueItems,
     views,
     carts,
     wish,
+    checkout,
   };
 }
 
@@ -650,6 +673,16 @@ function buildEventStreamForSession(
       });
     }
   }
+  for (const checkout of session.checkout) {
+    if (checkout.add) {
+      events.push({
+        ts: checkout.ts,
+        type: "checkout",
+        itemId: checkout.itemId,
+        price: itemMeta[checkout.itemId]?.price ?? 0,
+      });
+    }
+  }
   events.sort((a, b) => a.ts.getTime() - b.ts.getTime());
   return events;
 }
@@ -661,6 +694,7 @@ function transitionMatrixAndSankey(sessions: Session[], itemMeta: ItemMeta) {
     "view",
     "wishlist_add",
     "wishlist_remove",
+    "checkout",
   ];
   const index = Object.fromEntries(
     states.map((state, idx) => [state, idx] as const)
@@ -1022,6 +1056,7 @@ function computeAnalyticsFromDocs(
       nView: session.nView,
       nCartAdd: session.nCartAdd,
       nCartRemove: session.nCartRemove,
+      nCheckout: session.nCheckout,
     })),
     leak,
     recos,
